@@ -7,7 +7,7 @@ executors:
         auth:
           username: $DOCKER_HUB_USER
           password: $DOCKER_HUB_PASSWORD
-    resource_class: large 
+    resource_class: xlarge 
 
 jobs:
   my-job-name:
