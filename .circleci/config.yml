@@ -8,7 +8,6 @@ executors:
         auth:
           username: $DOCKER_HUB_USER
           password: $DOCKER_HUB_PASSWORD
-    # Menggunakan resource class medium (2 vCPU, 4GB RAM)
     resource_class: xlarge 
 
 # 2. Definisi Tugas (Jobs)
